@@ -1,34 +1,342 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<title>Latihan UTBK</title>
+<meta charset="UTF-8">
+<title>Simulasi UTBK - Pengetahuan Kuantitatif</title>
+
+<style>
+
+body{
+font-family: Arial, sans-serif;
+background:#f4f6fb;
+margin:0;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+background:white;
+width:800px;
+padding:30px;
+border-radius:10px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+}
+
+h2{
+margin-top:0;
+}
+
+#progressBar{
+height:8px;
+background:#eee;
+border-radius:10px;
+overflow:hidden;
+margin-bottom:20px;
+}
+
+#progress{
+height:100%;
+width:0%;
+background:#4f46e5;
+}
+
+button{
+padding:10px 20px;
+border:none;
+background:#4f46e5;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+opacity:0.9;
+}
+
+.nav{
+display:flex;
+justify-content:space-between;
+margin-top:20px;
+}
+
+.question{
+animation:fade .3s;
+}
+
+@keyframes fade{
+from{opacity:0;transform:translateX(10px);}
+to{opacity:1;}
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(10,1fr);
+gap:5px;
+margin-top:20px;
+}
+
+.grid button{
+background:#ddd;
+color:black;
+padding:5px;
+}
+
+.grid button.active{
+background:#4f46e5;
+color:white;
+}
+
+.timer{
+font-weight:bold;
+color:#e11d48;
+float:right;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<div id="startScreen">
+<h2>Simulasi UTBK</h2>
+<p>Pengetahuan Kuantitatif</p>
+
+<input id="name" placeholder="Masukkan Nama" style="padding:10px;width:100%;margin-bottom:20px">
+
+<button onclick="startTest()">Mulai</button>
+
+</div>
+
+<div id="quizScreen" style="display:none">
+
+<div class="timer" id="timer">10:00</div>
+
+<div id="progressBar">
+<div id="progress"></div>
+</div>
+
+<div id="questionContainer"></div>
+
+<div class="nav">
+<button onclick="prev()">Back</button>
+<button onclick="next()">Next</button>
+</div>
+
+<div class="grid" id="navGrid"></div>
+
+</div>
+
+<div id="resultScreen" style="display:none">
+
+<h2>Hasil</h2>
+
+<p id="score"></p>
+
+<div id="review"></div>
+
+</div>
+
+</div>
+
 <script>
-let time = 300; // 5 menit
+
+const questions=[
+
+{q:"2x + 3 = 11, nilai x adalah",o:["2","3","4","5"],a:2},
+
+{q:"Jika 5a = 20 maka a =",o:["2","3","4","5"],a:2},
+
+{q:"Keliling persegi dengan sisi 6 cm adalah",o:["12","18","24","36"],a:2},
+
+{q:"Luas segitiga alas 8 tinggi 5 =",o:["20","30","40","50"],a:0},
+
+{q:"Rata-rata dari 2,4,6,8 adalah",o:["4","5","6","7"],a:1},
+
+{q:"Median dari 1,3,5,7,9 =",o:["3","5","7","9"],a:1},
+
+{q:"Peluang muncul angka pada dadu =",o:["1/6","1/2","1/3","1/4"],a:1},
+
+{q:"Jika x² = 16 maka x =",o:["4","±4","8","2"],a:1},
+
+{q:"3x = 12 maka x =",o:["2","3","4","6"],a:2},
+
+{q:"Perbandingan 4 : 8 =",o:["1:2","2:1","1:3","3:1"],a:0},
+
+{q:"Luas persegi sisi 7 =",o:["14","21","49","28"],a:2},
+
+{q:"Jika peluang hujan 0.2 maka tidak hujan =",o:["0.8","0.2","0.5","0.6"],a:0},
+
+{q:"Jumlah sudut segitiga =",o:["90","180","360","270"],a:1},
+
+{q:"Mean dari 3,3,3,3 =",o:["3","4","2","1"],a:0},
+
+{q:"10% dari 200 =",o:["10","20","30","40"],a:1},
+
+{q:"Jika 4x=16 maka x =",o:["2","3","4","5"],a:2},
+
+{q:"Diagonal persegi sisi 1 =",o:["1","√2","2","3"],a:1},
+
+{q:"Peluang kepala pada koin =",o:["1/2","1/3","1/4","1/6"],a:0},
+
+{q:"Rata-rata 5 dan 7 =",o:["5","6","7","8"],a:1},
+
+{q:"2³ =",o:["4","6","8","16"],a:2}
+
+]
+
+let current=0
+let answers=new Array(questions.length).fill(null)
+let time=600
+let name=""
+
+function startTest(){
+
+name=document.getElementById("name").value
+
+if(name==""){alert("Isi nama dulu");return}
+
+document.getElementById("startScreen").style.display="none"
+document.getElementById("quizScreen").style.display="block"
+
+renderNav()
+showQuestion()
+
+timer()
+
+}
+
+function showQuestion(){
+
+let q=questions[current]
+
+let html="<div class='question'>"
+html+="<h3>Soal "+(current+1)+"</h3>"
+html+="<p>"+q.q+"</p>"
+
+q.o.forEach((opt,i)=>{
+
+html+=`
+<label>
+<input type="radio" name="q" value="${i}" ${answers[current]==i?"checked":""}>
+${opt}
+</label><br>
+`
+
+})
+
+html+="</div>"
+
+document.getElementById("questionContainer").innerHTML=html
+
+document.getElementById("progress").style.width=((current+1)/questions.length*100)+"%"
+
+}
+
+document.addEventListener("change",(e)=>{
+if(e.target.name=="q"){
+answers[current]=parseInt(e.target.value)
+}
+})
+
+function next(){
+
+if(current<questions.length-1){
+current++
+showQuestion()
+}
+
+}
+
+function prev(){
+
+if(current>0){
+current--
+showQuestion()
+}
+
+}
+
+function renderNav(){
+
+let grid=document.getElementById("navGrid")
+
+questions.forEach((_,i)=>{
+
+let btn=document.createElement("button")
+
+btn.innerText=i+1
+
+btn.onclick=()=>{
+
+current=i
+showQuestion()
+
+}
+
+grid.appendChild(btn)
+
+})
+
+}
 
 function timer(){
-    let t = document.getElementById("timer");
-    setInterval(function(){
-        time--;
-        t.innerHTML = "Waktu: " + time + " detik";
-        if(time <= 0){
-            alert("Waktu habis!");
-        }
-    },1000);
+
+setInterval(()=>{
+
+time--
+
+let m=Math.floor(time/60)
+let s=time%60
+
+document.getElementById("timer").innerText=
+m+":"+String(s).padStart(2,"0")
+
+if(time<=0){
+finish()
 }
+
+},1000)
+
+}
+
+function finish(){
+
+document.getElementById("quizScreen").style.display="none"
+document.getElementById("resultScreen").style.display="block"
+
+let score=0
+
+questions.forEach((q,i)=>{
+if(answers[i]==q.a)score++
+})
+
+document.getElementById("score").innerText=
+name+" mendapatkan skor "+score+" dari 20"
+
+sendEmail(score)
+
+}
+
+function sendEmail(score){
+
+emailjs.send("SERVICE_ID","TEMPLATE_ID",{
+name:name,
+score:score
+})
+
+}
+
 </script>
-</head>
 
-<body onload="timer()">
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
-<h2>Latihan UTBK</h2>
-
-<p id="timer"></p>
-
-<p>1. Hasil dari 2 + 3 adalah...</p>
-
-<input type="radio" name="q1">4<br>
-<input type="radio" name="q1">5<br>
-<input type="radio" name="q1">6<br>
+<script>
+emailjs.init("PUBLIC_KEY");
+</script>
 
 </body>
 </html>
