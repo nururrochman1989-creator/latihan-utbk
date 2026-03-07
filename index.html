@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Latihan UTBK</title>
+<script>
+let time = 300; // 5 menit
+
+function timer(){
+    let t = document.getElementById("timer");
+    setInterval(function(){
+        time--;
+        t.innerHTML = "Waktu: " + time + " detik";
+        if(time <= 0){
+            alert("Waktu habis!");
+        }
+    },1000);
+}
+</script>
+</head>
+
+<body onload="timer()">
+
+<h2>Latihan UTBK</h2>
+
+<p id="timer"></p>
+
+<p>1. Hasil dari 2 + 3 adalah...</p>
+
+<input type="radio" name="q1">4<br>
+<input type="radio" name="q1">5<br>
+<input type="radio" name="q1">6<br>
+
+</body>
+</html>
