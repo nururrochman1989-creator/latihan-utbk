@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTBK Simulator - Integrated Version</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .option-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+
+    <div id="screen-welcome" class="fixed inset-0 z-[100] bg-white flex items-center justify-center p-6">
+        <div class="max-w-md w-full text-center space-y-8 fade-in">
+            <div class="inline-flex p-4 bg-indigo-600 rounded-3xl text-white shadow-xl shadow-indigo-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-900">Simulasi UTBK 2026</h1>
+                <p class="text-slate-500 mt-2 font-medium">Penalaran Matematika (20 Soal / 20 Menit)</p>
+            </div>
+            <div class="space-y-4">
+                <input type="text" id="user-name" placeholder="Nama Lengkap Anda" class="w-full px-6 py-4 rounded-2xl border-2 border-slate-100 focus:border-indigo-500 outline-none text-center text-lg font-semibold transition-all">
+                <button onclick="startQuiz()" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg">Mulai Ujian</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-app" class="hidden min-h-screen flex flex-col">
+        <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 p-4">
+            <div class="max-w-6xl mx-auto flex justify-between items-center mb-4">
+                <div class="flex items-center gap-3 font-bold text-slate-800">
+                    <div class="bg-indigo-100 text-indigo-600 p-2 rounded-lg text-xs uppercase tracking-widest">UTBK-HOTS</div>
+                    <span id="display-name"></span>
+                </div>
+                <div id="timer" class="px-5 py-2 bg-red-50 text-red-600 font-mono font-bold rounded-xl border border-red-100 text-xl">20:00</div>
+            </div>
+            <div class="max-w-6xl mx-auto bg-slate-100 h-2 rounded-full overflow-hidden">
+                <div id="progress-bar" class="bg-indigo-600 h-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+        </header>
+
+        <main class="flex-grow max-w-6xl mx-auto w-full p-4 lg:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-8">
+                <div id="q-card" class="bg-white rounded-[2.5rem] border border-slate-100 p-8 md:p-12 min-h-[500px] flex flex-col justify-between shadow-sm fade-in">
+                    <div>
+                        <div class="flex items-center gap-3 mb-8">
+                            <span id="q-num" class="bg-slate-900 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest">Soal 01</span>
+                            <span class="text-xs font-bold text-indigo-500 uppercase tracking-widest">Penalaran Matematika</span>
+                        </div>
+                        <h2 id="q-text" class="text-xl md:text-2xl font-bold leading-relaxed text-slate-800 mb-10">Memuat teks soal...</h2>
+                        <div id="options" class="grid grid-cols-1 gap-4"></div>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-8 border-t border-slate-50 mt-12">
+                        <button onclick="prevQ()" id="btn-prev" class="px-8 py-3 rounded-xl font-bold text-slate-400 hover:bg-slate-50 disabled:opacity-30">Back</button>
+                        <button onclick="nextQ()" id="btn-next" class="px-10 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-100">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-4">
+                <div class="bg-white rounded-[2rem] border border-slate-100 p-8 sticky top-36 shadow-sm">
+                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 text-center">Nomor Soal</h3>
+                    <div id="q-grid" class="grid grid-cols-5 gap-3"></div>
+                    <button onclick="confirmFinish()" class="w-full mt-10 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all shadow-xl">Selesai & Kirim</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="screen-result" class="hidden fixed inset-0 z-[200] bg-slate-50 flex items-center justify-center p-6 overflow-y-auto text-center">
+        <div class="max-w-xl w-full bg-white rounded-[3rem] shadow-2xl p-10 md:p-16 border border-white fade-in">
+            <div class="mb-8 inline-flex p-6 bg-green-50 text-green-500 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <h2 class="text-4xl font-extrabold text-slate-900 mb-2">Skor Kamu</h2>
+            <p id="res-name" class="text-indigo-600 font-bold text-xl mb-10 tracking-widest uppercase"></p>
+            
+            <div class="grid grid-cols-2 gap-6 mb-10">
+                <div class="p-8 bg-indigo-50 rounded-3xl border border-indigo-100">
+                    <div id="res-score" class="text-5xl font-black text-indigo-600">0</div>
+                    <div class="text-[10px] font-bold text-indigo-400 uppercase mt-2">Skor Akhir</div>
+                </div>
+                <div class="p-8 bg-slate-50 rounded-3xl border border-slate-100">
+                    <div id="res-correct" class="text-5xl font-black text-slate-800">0</div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase mt-2">Benar</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button onclick="toggleReview()" class="py-4 bg-slate-100 text-slate-700 rounded-2xl font-bold hover:bg-slate-200 transition-all">Review Jawaban</button>
+                <button onclick="downloadPDF()" class="py-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-xl">Simpan PDF</button>
+            </div>
+            <p id="status-cloud" class="mt-6 text-xs text-slate-400 italic">Mengirim data ke sistem...</p>
+        </div>
+    </div>
+
+    <div id="review-overlay" class="hidden fixed inset-0 z-[300] bg-white overflow-y-auto p-6 md:p-12 lg:p-24">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex justify-between items-center mb-16">
+                <h2 class="text-4xl font-black tracking-tight">Analisis Detail</h2>
+                <button onclick="toggleReview()" class="px-6 py-3 bg-red-50 text-red-600 rounded-xl font-bold hover:bg-red-100 transition-all">Tutup Review ✕</button>
+            </div>
+            <div id="review-content" class="space-y-10"></div>
+        </div>
+    </div>
+
+<script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxTLtGjqEwkfmB70tEiOiTlIn0scVF8bh53iOBolp_HQj2_k6irpOJoj5-2u9DbB-qqHA/exec";
+
+    // 20 Soal HOTS Penalaran Matematika
+    const questions = [
+        { q: "Seorang pedagang membeli 40 kg kopi seharga Rp1.200.000. Ia mencampur kopi tersebut dengan kopi jenis lain sebanyak 60 kg yang harganya Rp40.000/kg. Jika ia menjual campuran tersebut seharga Rp45.000/kg, berapa persentase keuntungannya?", a: ["12.5%", "20%", "25%", "28.5%", "30%"], r: 2 },
+        { q: "Dua buah mesin cetak A dan B dapat menyelesaikan sebuah tugas dalam 4 jam. Jika mesin A bekerja sendiri, ia butuh 6 jam lebih lama daripada mesin B. Berapa jam mesin B menyelesaikan tugas tersebut sendirian?", a: ["4 jam", "6 jam", "8 jam", "10 jam", "12 jam"], r: 1 },
+        { q: "Rata-rata berat badan 12 atlet adalah 75 kg. Jika 3 atlet dengan rata-rata berat 80 kg keluar, dan digantikan oleh 3 atlet baru dengan rata-rata berat 70 kg, berapakah rata-rata baru seluruh atlet?", a: ["72.5 kg", "73.5 kg", "74 kg", "74.5 kg", "75 kg"], r: 0 },
+        { q: "Dalam sebuah kotak terdapat 6 bola merah dan 4 bola putih. Jika diambil 3 bola sekaligus secara acak, peluang mendapatkan paling sedikit 2 bola putih adalah...", a: ["1/3", "1/6", "11/30", "1/2", "2/5"], r: 2 },
+        { q: "Persamaan garis g melewati titik (1,2) dan tegak lurus dengan garis 3x - 4y + 5 = 0. Titik potong garis g dengan sumbu Y adalah...", a: "(0, 10/3)", a: ["(0, 7/3)", "(0, 10/3)", "(0, 11/3)", "(0, 3)", "(0, 4)"], r: 1 },
+        { q: "Jika x + 2/x = 5, maka nilai x² + 4/x² adalah...", a: ["21", "23", "25", "27", "29"], r: 0 },
+        { q: "Harga 3 kemeja dan 2 celana adalah Rp450.000. Harga kemeja didiskon 20% dan celana didiskon 10% sehingga totalnya menjadi Rp381.000. Harga satu kemeja mula-mula adalah...", a: ["Rp70rb", "Rp80rb", "Rp90rb", "Rp100rb", "Rp110rb"], r: 2 },
+        { q: "Suku ke-4 deret geometri adalah 24 dan suku ke-7 adalah 192. Jumlah 10 suku pertama deret tersebut adalah...", a: ["3069", "3072", "1533", "1536", "6141"], r: 0 },
+        { q: "Jika log 2 = p dan log 3 = q, maka log 150 adalah...", a: ["2 - p + q", "2 + p - q", "1 - p + q", "1 + p + q", "3 - p - q"], r: 0 },
+        { q: "Sebuah bola basket dijatuhkan dari ketinggian 15 m. Setiap memantul, tingginya mencapai 4/5 tinggi sebelumnya. Panjang seluruh lintasan bola adalah...", a: ["75 m", "120 m", "135 m", "150 m", "165 m"], r: 2 },
+        { q: "Sistem persamaan: 1/x + 1/y = 5 dan 2/x - 3/y = -5. Maka nilai x + y adalah...", a: ["5/6", "6/5", "1/2", "1/3", "2/3"], r: 0 },
+        { q: "Banyak susunan huruf berbeda yang dapat dibentuk dari kata 'SIMULASI' adalah...", a: ["6720", "10080", "20160", "40320", "5040"], r: 1 },
+        { q: "Median dari data: 4, 7, 5, 8, 9, 6, 7, 10 adalah...", a: ["6.5", "7", "7.25", "7.5", "8"], r: 1 },
+        { q: "Jarak dua kota A dan B adalah 120 km. Amir berangkat dari A pukul 08.00 dengan kecepatan 40 km/jam. Budi berangkat dari B pukul 08.30 dengan kecepatan 60 km/jam. Mereka akan berpapasan pukul...", a: ["09.00", "09.15", "09.30", "09.45", "10.00"], r: 2 },
+        { q: "Volume kerucut dengan jari-jari 7 cm dan tinggi 12 cm adalah (π=22/7)...", a: ["154 cm³", "308 cm³", "462 cm³", "616 cm³", "1232 cm³"], r: 3 },
+        { q: "Jika f(x) = 2x - 1 dan (g o f)(x) = 4x² + 2x - 5, maka g(3) adalah...", a: ["13", "15", "17", "19", "21"], r: 1 },
+        { q: "Penyelesaian dari pertidaksamaan (x-2)/(x+3) ≤ 0 adalah...", a: ["x < -3", "x ≥ 2", "-3 < x ≤ 2", "x < -3 atau x ≥ 2", "-3 ≤ x ≤ 2"], r: 2 },
+        { q: "Nilai x yang memenuhi persamaan 9^(x+1) = 27^(x-1) adalah...", a: ["2", "3", "4", "5", "6"], r: 4 },
+        { q: "Matriks A = [[x, 4], [3, y]] tidak memiliki invers jika nilai xy adalah...", a: ["7", "12", "-7", "1", "0"], r: 1 },
+        { q: "Dari 30 siswa, 18 suka bakso, 15 suka soto, dan 5 tidak suka keduanya. Banyak siswa yang suka keduanya adalah...", a: ["5", "8", "10", "12", "15"], r: 1 }
+    ];
+
+    let currentIdx = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+    let timeLeft = 1200; 
+    let userName = "";
+    let quizInterval;
+
+    function startQuiz() {
+        userName = document.getElementById('user-name').value;
+        if(!userName) return alert("Masukkan nama untuk memulai!");
+        document.getElementById('display-name').innerText = userName;
+        document.getElementById('screen-welcome').style.display = 'none';
+        document.getElementById('main-app').style.display = 'flex';
+        renderQuestion();
+        quizInterval = setInterval(updateTimer, 1000);
+    }
+
+    function renderQuestion() {
+        const q = questions[currentIdx];
+        document.getElementById('q-num').innerText = `Soal ${currentIdx + 1 < 10 ? '0' : ''}${currentIdx + 1}`;
+        document.getElementById('q-text').innerText = q.q;
+        
+        const optionsDiv = document.getElementById('options');
+        optionsDiv.innerHTML = "";
+        q.a.forEach((opt, i) => {
+            const isSelected = userAnswers[currentIdx] === i;
+            optionsDiv.innerHTML += `
+                <button onclick="selectOption(${i})" class="option-card w-full text-left p-5 rounded-2xl border-2 transition-all flex items-center gap-4 ${isSelected ? 'border-indigo-600 bg-indigo-50/50' : 'border-slate-50 bg-white'}">
+                    <span class="w-10 h-10 flex items-center justify-center rounded-xl font-black text-sm ${isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-400'}">${String.fromCharCode(65+i)}</span>
+                    <span class="font-bold ${isSelected ? 'text-indigo-900' : 'text-slate-600'}">${opt}</span>
+                </button>
+            `;
+        });
+        document.getElementById('progress-bar').style.width = `${((currentIdx + 1) / questions.length) * 100}%`;
+        renderGrid();
+    }
+
+    function selectOption(i) { userAnswers[currentIdx] = i; renderQuestion(); }
+    function nextQ() { if(currentIdx < questions.length-1) { currentIdx++; renderQuestion(); } else { confirmFinish(); } }
+    function prevQ() { if(currentIdx > 0) { currentIdx--; renderQuestion(); } }
+    function goToQ(i) { currentIdx = i; renderQuestion(); }
+
+    function renderGrid() {
+        const grid = document.getElementById('q-grid');
+        grid.innerHTML = "";
+        questions.forEach((_, i) => {
+            const isAnswered = userAnswers[i] !== null;
+            const isCurrent = i === currentIdx;
+            grid.innerHTML += `
+                <button onclick="goToQ(${i})" class="h-11 rounded-xl font-bold text-xs ${isCurrent ? 'ring-4 ring-indigo-100 bg-indigo-600 text-white' : isAnswered ? 'bg-slate-800 text-white' : 'bg-slate-50 text-slate-300'}">${i + 1}</button>
+            `;
+        });
+    }
+
+    function updateTimer() {
+        timeLeft--;
+        let m = Math.floor(timeLeft/60);
+        let s = timeLeft % 60;
+        document.getElementById('timer').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+        if(timeLeft <= 0) finishQuiz();
+    }
+
+    function confirmFinish() { if(confirm("Kumpulkan jawaban sekarang?")) finishQuiz(); }
+
+    async function finishQuiz() {
+        clearInterval(quizInterval);
+        let correct = 0;
+        userAnswers.forEach((ans, i) => { if(ans === questions[i].r) correct++; });
+        const finalScore = correct * 5;
+
+        document.getElementById('main-app').style.display = 'none';
+        document.getElementById('screen-result').style.display = 'flex';
+        document.getElementById('res-name').innerText = userName;
+        document.getElementById('res-score').innerText = finalScore;
+        document.getElementById('res-correct').innerText = `${correct}/20`;
+
+        // SEND DATA TO GOOGLE SHEET
+        try {
+            await fetch(GAS_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    nama: userName,
+                    skor: finalScore,
+                    jawaban: userAnswers.join(",")
+                })
+            });
+            document.getElementById('status-cloud').innerText = "Data tersimpan di Cloud!";
+        } catch(e) {
+            document.getElementById('status-cloud').innerText = "Gagal mengirim ke cloud, tapi skor lokal aman.";
+        }
+    }
+
+    function toggleReview() {
+        const overlay = document.getElementById('review-overlay');
+        if(overlay.style.display === 'block') {
+            overlay.style.display = 'none';
+        } else {
+            overlay.style.display = 'block';
+            const container = document.getElementById('review-content');
+            container.innerHTML = questions.map((q, i) => `
+                <div class="p-8 rounded-[2rem] border-2 ${userAnswers[i] === q.r ? 'border-green-100 bg-green-50/20' : 'border-red-100 bg-red-50/20'}">
+                    <p class="text-[10px] font-black uppercase tracking-widest mb-4 ${userAnswers[i] === q.r ? 'text-green-600' : 'text-red-600'}">SOAL ${i+1}</p>
+                    <h3 class="font-bold text-lg leading-relaxed mb-6">${q.q}</h3>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="px-4 py-2 rounded-xl bg-white text-sm font-bold border border-slate-100">Jawaban Kamu: ${userAnswers[i] !== null ? q.a[userAnswers[i]] : 'Kosong'}</div>
+                        <div class="px-4 py-2 rounded-xl bg-green-600 text-white text-sm font-bold">Kunci: ${q.a[q.r]}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function downloadPDF() {
+        const element = document.createElement('div');
+        element.style.padding = '40px';
+        element.innerHTML = `
+            <h1 style="color: #4f46e5; font-size: 24px;">Laporan Hasil UTBK</h1>
+            <p>Nama: <b>${userName}</b> | Skor: <b>${document.getElementById('res-score').innerText}</b></p>
+            <hr style="margin: 20px 0"/>
+            ${questions.map((q, i) => `
+                <div style="margin-bottom: 15px;">
+                    <p><b>Soal ${i+1}:</b> ${q.q}</p>
+                    <p>Status: ${userAnswers[i] === q.r ? 'Benar' : 'Salah'} | Kunci: ${q.a[q.r]}</p>
+                </div>
+            `).join('')}
+        `;
+        html2pdf().from(element).save(`${userName}_UTBK.pdf`);
+    }
+</script>
+</body>
+</html>
