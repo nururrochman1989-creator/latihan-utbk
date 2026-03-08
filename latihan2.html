@@ -119,31 +119,52 @@
 
     // 20 Soal HOTS Penalaran Matematika
     const questions = [
-        { q: "Seorang pedagang membeli 40 kg kopi seharga Rp1.200.000. Ia mencampur kopi tersebut dengan kopi jenis lain sebanyak 60 kg yang harganya Rp40.000/kg. Jika ia menjual campuran tersebut seharga Rp45.000/kg, berapa persentase keuntungannya?", a: ["12.5%", "20%", "25%", "28.5%", "30%"], r: 2 },
-        { q: "Dua buah mesin cetak A dan B dapat menyelesaikan sebuah tugas dalam 4 jam. Jika mesin A bekerja sendiri, ia butuh 6 jam lebih lama daripada mesin B. Berapa jam mesin B menyelesaikan tugas tersebut sendirian?", a: ["4 jam", "6 jam", "8 jam", "10 jam", "12 jam"], r: 1 },
-        { q: "Rata-rata berat badan 12 atlet adalah 75 kg. Jika 3 atlet dengan rata-rata berat 80 kg keluar, dan digantikan oleh 3 atlet baru dengan rata-rata berat 70 kg, berapakah rata-rata baru seluruh atlet?", a: ["72.5 kg", "73.5 kg", "74 kg", "74.5 kg", "75 kg"], r: 0 },
-        { q: "Dalam sebuah kotak terdapat 6 bola merah dan 4 bola putih. Jika diambil 3 bola sekaligus secara acak, peluang mendapatkan paling sedikit 2 bola putih adalah...", a: ["1/3", "1/6", "11/30", "1/2", "2/5"], r: 2 },
-        { q: "Persamaan garis g melewati titik (1,2) dan tegak lurus dengan garis 3x - 4y + 5 = 0. Titik potong garis g dengan sumbu Y adalah...", a: "(0, 10/3)", a: ["(0, 7/3)", "(0, 10/3)", "(0, 11/3)", "(0, 3)", "(0, 4)"], r: 1 },
-        { q: "Jika x + 2/x = 5, maka nilai x² + 4/x² adalah...", a: ["21", "23", "25", "27", "29"], r: 0 },
-        { q: "Harga 3 kemeja dan 2 celana adalah Rp450.000. Harga kemeja didiskon 20% dan celana didiskon 10% sehingga totalnya menjadi Rp381.000. Harga satu kemeja mula-mula adalah...", a: ["Rp70rb", "Rp80rb", "Rp90rb", "Rp100rb", "Rp110rb"], r: 2 },
-        { q: "Suku ke-4 deret geometri adalah 24 dan suku ke-7 adalah 192. Jumlah 10 suku pertama deret tersebut adalah...", a: ["3069", "3072", "1533", "1536", "6141"], r: 0 },
-        { q: "Jika log 2 = p dan log 3 = q, maka log 150 adalah...", a: ["2 - p + q", "2 + p - q", "1 - p + q", "1 + p + q", "3 - p - q"], r: 0 },
-        { q: "Sebuah bola basket dijatuhkan dari ketinggian 15 m. Setiap memantul, tingginya mencapai 4/5 tinggi sebelumnya. Panjang seluruh lintasan bola adalah...", a: ["75 m", "120 m", "135 m", "150 m", "165 m"], r: 2 },
-        { q: "Sistem persamaan: 1/x + 1/y = 5 dan 2/x - 3/y = -5. Maka nilai x + y adalah...", a: ["5/6", "6/5", "1/2", "1/3", "2/3"], r: 0 },
-        { q: "Banyak susunan huruf berbeda yang dapat dibentuk dari kata 'SIMULASI' adalah...", a: ["6720", "10080", "20160", "40320", "5040"], r: 1 },
-        { q: "Median dari data: 4, 7, 5, 8, 9, 6, 7, 10 adalah...", a: ["6.5", "7", "7.25", "7.5", "8"], r: 1 },
-        { q: "Jarak dua kota A dan B adalah 120 km. Amir berangkat dari A pukul 08.00 dengan kecepatan 40 km/jam. Budi berangkat dari B pukul 08.30 dengan kecepatan 60 km/jam. Mereka akan berpapasan pukul...", a: ["09.00", "09.15", "09.30", "09.45", "10.00"], r: 2 },
-        { q: "Volume kerucut dengan jari-jari 7 cm dan tinggi 12 cm adalah (π=22/7)...", a: ["154 cm³", "308 cm³", "462 cm³", "616 cm³", "1232 cm³"], r: 3 },
-        { q: "Jika f(x) = 2x - 1 dan (g o f)(x) = 4x² + 2x - 5, maka g(3) adalah...", a: ["13", "15", "17", "19", "21"], r: 1 },
-        { q: "Penyelesaian dari pertidaksamaan (x-2)/(x+3) ≤ 0 adalah...", a: ["x < -3", "x ≥ 2", "-3 < x ≤ 2", "x < -3 atau x ≥ 2", "-3 ≤ x ≤ 2"], r: 2 },
-        { q: "Nilai x yang memenuhi persamaan 9^(x+1) = 27^(x-1) adalah...", a: ["2", "3", "4", "5", "6"], r: 4 },
-        { q: "Matriks A = [[x, 4], [3, y]] tidak memiliki invers jika nilai xy adalah...", a: ["7", "12", "-7", "1", "0"], r: 1 },
-        { q: "Dari 30 siswa, 18 suka bakso, 15 suka soto, dan 5 tidak suka keduanya. Banyak siswa yang suka keduanya adalah...", a: ["5", "8", "10", "12", "15"], r: 1 }
-    ];
+
+{ q: "Jika 3x + 5 = 20, maka nilai x² adalah...", a: ["16", "20", "25", "36", "49"], r: 2 },
+
+{ q: "Hasil dari 2³ + 3² × 2 adalah...", a: ["20", "22", "24", "26", "28"], r: 3 },
+
+{ q: "Sebuah persegi memiliki sisi 8 cm. Luas persegi tersebut adalah...", a: ["48 cm²", "56 cm²", "64 cm²", "72 cm²", "80 cm²"], r: 2 },
+
+{ q: "Nilai dari √144 + √36 adalah...", a: ["16", "18", "20", "22", "24"], r: 1 },
+
+{ q: "Jika x = 4 dan y = 6, maka nilai dari 2x + 3y adalah...", a: ["22", "24", "26", "28", "30"], r: 2 },
+
+{ q: "Jumlah tiga bilangan berturut-turut adalah 45. Bilangan tengah adalah...", a: ["13", "14", "15", "16", "17"], r: 2 },
+
+{ q: "Jika 5x − 7 = 18, maka nilai x adalah...", a: ["4", "5", "6", "7", "8"], r: 1 },
+
+{ q: "Keliling sebuah lingkaran dengan jari-jari 7 cm adalah... (π = 22/7)", a: ["22 cm", "44 cm", "66 cm", "88 cm", "154 cm"], r: 1 },
+
+{ q: "Volume kubus dengan panjang sisi 5 cm adalah...", a: ["100 cm³", "110 cm³", "120 cm³", "125 cm³", "150 cm³"], r: 3 },
+
+{ q: "Hasil dari 15% × 200 adalah...", a: ["20", "25", "30", "35", "40"], r: 2 },
+
+{ q: "Jika 4 orang dapat menyelesaikan pekerjaan dalam 12 hari, maka 8 orang akan menyelesaikan pekerjaan tersebut dalam...", a: ["4 hari", "5 hari", "6 hari", "7 hari", "8 hari"], r: 2 },
+
+{ q: "Rata-rata dari bilangan 10, 15, 20, dan 25 adalah...", a: ["15", "16", "17.5", "18", "20"], r: 2 },
+
+{ q: "Jika harga sebuah barang Rp80.000 dan mendapat diskon 25%, maka harga setelah diskon adalah...", a: ["Rp55.000", "Rp60.000", "Rp65.000", "Rp70.000", "Rp75.000"], r: 1 },
+
+{ q: "Perbandingan umur Ani dan Budi adalah 3 : 5. Jika jumlah umur mereka 32 tahun, maka umur Ani adalah...", a: ["10 tahun", "12 tahun", "14 tahun", "16 tahun", "18 tahun"], r: 1 },
+
+{ q: "Jika sebuah mobil menempuh jarak 150 km dalam 3 jam, maka kecepatan rata-ratanya adalah...", a: ["40 km/jam", "45 km/jam", "50 km/jam", "55 km/jam", "60 km/jam"], r: 2 },
+
+{ q: "Jika 2x + 3 = 11, maka nilai dari 3x − 2 adalah...", a: ["7", "8", "9", "10", "11"], r: 3 },
+
+{ q: "Sebuah segitiga memiliki alas 10 cm dan tinggi 8 cm. Luas segitiga tersebut adalah...", a: ["30 cm²", "35 cm²", "40 cm²", "45 cm²", "50 cm²"], r: 2 },
+
+{ q: "Nilai dari 7² − 5² adalah...", a: ["12", "18", "24", "30", "36"], r: 2 },
+
+{ q: "Jika 6 pensil seharga Rp12.000, maka harga 10 pensil adalah...", a: ["Rp18.000", "Rp19.000", "Rp20.000", "Rp21.000", "Rp22.000"], r: 2 },
+
+{ q: "Akar dari 225 adalah...", a: ["12", "13", "14", "15", "16"], r: 3 }
+
+];
 
     let currentIdx = 0;
     let userAnswers = new Array(questions.length).fill(null);
-    let timeLeft = 1200; 
+    let timeLeft = 600; 
     let userName = "";
     let quizInterval;
 
@@ -272,3 +293,4 @@
 </body>
 
 </html>
+
